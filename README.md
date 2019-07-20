@@ -1,2 +1,4 @@
 # config-safe-house
-配置安全屋,备份consul,kubernetes yaml等
+
+Backup `consul` kv,`kubernetes` yaml and so no.
+

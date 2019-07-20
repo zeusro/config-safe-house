@@ -1,0 +1,28 @@
+
+kubernetes:
+  - instance:
+    backup:
+      - cron: ""        
+        strategy:
+          type: 'kubernetes'
+          format: "file"
+          path: 'kubernetes/'
+consul:
+  - instanceName: ""
+    instanceURL: ""
+    backup:
+      - cron: ""        
+        strategy:
+          type: 'consul'
+          format: "file"
+          exclude:
+            - "/leader/.+"            
+          path: 'consul/'          
+    check:
+      - cron: ""        
+        strategy:
+          type: "http"
+          warn: 'dingtalk-1'
+alert:
+  - name: 'dingtalk-1'
+    type: 'dingtalk'
