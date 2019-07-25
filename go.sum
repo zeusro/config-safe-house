@@ -1,0 +1,4 @@
+github.com/jasonlvhit/gocron v0.0.0-20190725035257-119b1cc4767b h1:EKrDMFCJqtDEMZ01GZIy9+SiCroLr/pNf59uQF0iRZU=
+github.com/jasonlvhit/gocron v0.0.0-20190725035257-119b1cc4767b/go.mod h1:rwi/esz/h+4oWLhbWWK7f6dtmgLzxeZhnwGr7MCsTNk=
+github.com/mitchellh/go-homedir v1.1.0 h1:lukF9ziXFxDFPkA1vsr5zpc1XuPDn/wFntq5mG+4E0Y=
+github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
