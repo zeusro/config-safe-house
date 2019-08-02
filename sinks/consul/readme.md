@@ -8,5 +8,3 @@ get /v1/kv/?keys
 step 2:
 
 get and save
-
-    export GO111MODULE=on

@@ -12,5 +12,11 @@ var obj = ConsulBackup{
 }
 
 func TestBackup(t *testing.T) {
+	TestCleanOld(t)
 	obj.Backup()
+}
+
+func TestCleanOld(t *testing.T) {
+	today := time.Now()
+	obj.CleanOld(today)
 }

@@ -53,7 +53,6 @@ func (obj *ConsulBackup) Backup() {
 			}
 		}
 	}
-
 	for _, v := range fillerConfigArray {
 		obj.SaveToLocal(v)
 		// fmt.Println(v)
@@ -64,7 +63,8 @@ func (obj *ConsulBackup) Backup() {
 // SaveToLocal 保存到本地,先这样实现了.
 // fix me:最好定义一个底层可扩展的接口
 func (obj *ConsulBackup) SaveToLocal(consulKey string) {
-	now := obj.StartDate.Format("2006-01-02-150405")
+	today := obj.StartDate.Format("2006-01-02")
+	now := obj.StartDate.Format("150405")
 	consulSDK := NewConsulAPI(obj.Host)
 	rawValue := consulSDK.Key(consulKey)
 	consulURL, err := url.Parse(obj.Host)
@@ -72,7 +72,7 @@ func (obj *ConsulBackup) SaveToLocal(consulKey string) {
 		log.Fatal(err)
 		return
 	}
-	filePath := path.Join("file", "consul", consulURL.Host, now, consulKey)
+	filePath := path.Join("file", "consul", consulURL.Host, today, now, consulKey)
 	parentDir := filepath.Dir(filePath)
 	// fmt.Printf("filePath: %s \n", filePath)
 	// fmt.Printf("parentDir: %s \n", parentDir)
@@ -85,5 +85,25 @@ func (obj *ConsulBackup) SaveToLocal(consulKey string) {
 	if err != nil {
 		log.Fatal(err)
 		return
+	}
+}
+
+// CleanOld 危险接口,慎重使用
+func (obj *ConsulBackup) CleanOld(before time.Time) {
+	consulURL, err := url.Parse(obj.Host)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	backupDir := path.Join("file", "consul", consulURL.Host)
+	files, err := ioutil.ReadDir(backupDir)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	for _, f := range files {
+		// fmt.Println(f.Name())
+		os.RemoveAll(path.Join(backupDir, f.Name()))
+
 	}
 }

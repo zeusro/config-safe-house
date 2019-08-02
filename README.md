@@ -8,3 +8,6 @@ Backup `consul` kv,`kubernetes` yaml and so no.
 - [ ] 配置替换
 - [ ] YAML 备份
 - [ ] dingtalk alert
+
+    export GO111MODULE=on
+    go mod vendor
