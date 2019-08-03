@@ -4,9 +4,8 @@ Backup `consul` kv,`kubernetes` yaml and so no.
 
 ## TODO
 
-- [ ] 配置解析
+- [x] 配置解析(2019-08-03)
 - [ ] 配置替换
-- [ ] YAML 备份
 - [ ] dingtalk alert
 
     export GO111MODULE=on

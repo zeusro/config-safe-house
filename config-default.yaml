@@ -8,13 +8,14 @@ kubernetes:
           format: "file"
           path: 'kubernetes/'
 consul:
-  - instanceName: ""
+  - instanceName: "prod"
     instanceURL: ""
     backup:
-      - cron: ""        
+      - name: "FileBackupPolicy"
+        cron: ""        
         strategy:
-          type: 'consul'
-          format: "file"
+          name: "FileBackupStrategy"
+          type: 'consul'          
           exclude:
             - "/leader/.+"            
           path: 'consul/'          

@@ -1,6 +1,7 @@
 package consul
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/url"
@@ -8,18 +9,21 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
 
 type ConsulBackup struct {
-	Type      string
-	Format    string
-	Exclude   []string
-	Host      string
-	StartDate time.Time
+	// Type      string
+	// Format    string
+	Exclude    []string
+	Host       string
+	StartDate  time.Time
+	PrefixPath string
 }
 
-func NewConsulBackup(m map[string]string) *ConsulBackup {
+func NewConsulBackup() *ConsulBackup {
 
 	return &ConsulBackup{
 		StartDate: time.Now(),
@@ -28,6 +32,7 @@ func NewConsulBackup(m map[string]string) *ConsulBackup {
 
 // Backup 备份
 func (obj *ConsulBackup) Backup() {
+	obj.StartDate = time.Now()
 	consulSDK := NewConsulAPI(obj.Host)
 	cofigArray := consulSDK.Keys()
 	// for _, v := range cofigArray {
@@ -72,7 +77,7 @@ func (obj *ConsulBackup) SaveToLocal(consulKey string) {
 		log.Fatal(err)
 		return
 	}
-	filePath := path.Join("file", "consul", consulURL.Host, today, now, consulKey)
+	filePath := path.Join(obj.PrefixPath, consulURL.Host, today, now, consulKey)
 	parentDir := filepath.Dir(filePath)
 	// fmt.Printf("filePath: %s \n", filePath)
 	// fmt.Printf("parentDir: %s \n", parentDir)
@@ -81,7 +86,7 @@ func (obj *ConsulBackup) SaveToLocal(consulKey string) {
 		os.MkdirAll(parentDir, os.ModePerm)
 	}
 	//全部只读
-	err = ioutil.WriteFile(filePath, []byte(rawValue), 0444)
+	err = ioutil.WriteFile(filePath, []byte(rawValue), 0666)
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -89,21 +94,64 @@ func (obj *ConsulBackup) SaveToLocal(consulKey string) {
 }
 
 // CleanOld 危险接口,慎重使用
-func (obj *ConsulBackup) CleanOld(before time.Time) {
+func (obj *ConsulBackup) CleanOld(cron string) {
+	crons := strings.Split(cron, " ")
+	interval, err := strconv.ParseInt(crons[0], 10, 64)
+	if err != nil {
+		fmt.Errorf("cron format error.")
+		os.Exit(-1)
+		return
+	}
+	before := time.Now()
+	switch crons[1] {
+	case "d":
+		before = before.AddDate(0, 0, -int(interval))
+		break
+	case "h":
+		before = before.Add(time.Hour * -time.Duration(interval))
+		break
+	case "m":
+		before = before.Add(time.Minute * -time.Duration(interval))
+		break
+	case "s":
+		before = before.Add(time.Second * -time.Duration(interval))
+		break
+	}
 	consulURL, err := url.Parse(obj.Host)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	backupDir := path.Join("file", "consul", consulURL.Host)
+	// 遍历清除文件
+	backupDir := path.Join(obj.PrefixPath, consulURL.Host)
+	location, _ := time.LoadLocation("Local")
+	thatDate := time.Date(before.Year(), before.Month(), before.Day(), 0, 0, 0, 0, location)
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, location)
+	beforeAfterToday := before.After(today)
 	files, err := ioutil.ReadDir(backupDir)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 	for _, f := range files {
-		// fmt.Println(f.Name())
-		os.RemoveAll(path.Join(backupDir, f.Name()))
-
+		//先删除前几天的文件,再删除今天之内的文件
+		dayDir := f.Name()
+		date, err := time.Parse("2006-01-02", dayDir)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error: %v\n", err)
+			return
+		}
+		if today.Equal(date) && beforeAfterToday {
+			//清理当天文件夹
+			todayFiles, _ := ioutil.ReadDir(path.Join(backupDir, f.Name()))
+			// dateDir :
+		}
+		if date.Before(thatDate) {
+			// WIP
+			// os.RemoveAll(path.Join(backupDir, f.Name()))
+			fmt.Print("dir:")
+			fmt.Println(path.Join(backupDir, f.Name()))
+		}
 	}
 }

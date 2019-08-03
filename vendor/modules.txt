@@ -1,2 +1,6 @@
 # github.com/jasonlvhit/gocron v0.0.0-20190725035257-119b1cc4767b
 github.com/jasonlvhit/gocron
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2
+# sigs.k8s.io/yaml v1.1.0
+sigs.k8s.io/yaml
