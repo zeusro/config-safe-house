@@ -165,7 +165,7 @@ func (obj *ConsulBackup) CleanOld(cron string) {
 	}
 	consulURL, err := url.Parse(obj.Host)
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 		return
 	}
 	// 遍历清除文件
@@ -178,7 +178,7 @@ func (obj *ConsulBackup) CleanOld(cron string) {
 	// fmt.Printf("deadlineAfterToday: %v \n", deadlineAfterToday)
 	files, err := ioutil.ReadDir(backupDir)
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 		return
 	}
 	for _, f := range files {

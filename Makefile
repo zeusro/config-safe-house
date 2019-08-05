@@ -17,4 +17,5 @@ docker:
 	docker push $(IMAGE)
 
 up:
-	docker-compose up --no-cache
+	docker-compose build --no-cache
+	docker-compose up --force-recreate 

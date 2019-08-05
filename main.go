@@ -13,7 +13,7 @@ import (
 
 func main() {
 	var waitGroup sync.WaitGroup
-	fmt.Println(" config-safe-house is running.")
+	fmt.Println("config-safe-house is running.")
 	configPath := path.Join("config.yaml")
 	config, _ := model.ParseFromPath(configPath)
 	if config == nil {
@@ -21,7 +21,7 @@ func main() {
 		config, _ = model.ParseFromPath(configPath)
 	}
 	if config == nil {
-		fmt.Printf("Load config fail, please check if config.yaml/config-default.yaml exist. \n path: %s", configPath)
+		fmt.Printf("Load config fail, please check if config.yaml/config-default.yaml exist. \n path: %s \n", configPath)
 		os.Exit(-1)
 		return
 	}
@@ -69,5 +69,5 @@ func main() {
 	}
 	// wait till world end
 	waitGroup.Wait()
-	fmt.Println(" Exit. ")
+	fmt.Println("Exit. ")
 }

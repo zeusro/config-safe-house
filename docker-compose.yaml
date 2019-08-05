@@ -4,3 +4,4 @@ services:
     build: .
     volumes:
     - /backup:/backup
+    - /root/config-safe-house/config.yaml:/config.yaml
