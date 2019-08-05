@@ -15,3 +15,6 @@ clean:
 docker:
 	docker build --pull -t $(IMAGE) -f Dockerfile .
 	docker push $(IMAGE)
+
+up:
+	docker-compose up --no-cache
