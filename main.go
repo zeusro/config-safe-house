@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/jasonlvhit/gocron"
@@ -27,7 +25,7 @@ func main() {
 		os.Exit(-1)
 		return
 	}
-	fmt.Printf("%#v \n", config)
+	fmt.Printf("config: %#v \n", config)
 	for _, consulConfig := range config.Consul {
 		if err := consulConfig.CheckSelf(); err != nil {
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
@@ -35,76 +33,41 @@ func main() {
 			return
 		}
 		waitGroup.Add(1)
-		go func() {
-			fmt.Printf("backup job : %s ; \n ", consulConfig.InstanceURL)
-			backupConfigs := consulConfig.Backup
+		//对象的内容(consulConfig)有变化,但是指针是不变的,所以这里要传对象的复制
+		go func(consulInfo model.ConsulConfig) {
+			fmt.Printf("backup job : %s ; \n ", consulInfo.InstanceURL)
+			backupConfigs := consulInfo.Backup
 			for _, backupConfig := range backupConfigs {
-				waitGroup.Add(1)
-				go func() {
-					s1 := gocron.NewScheduler()
-					//解析表达式
-					cron := backupConfig.File.Cron
-					crons := strings.Split(cron, " ")
-					interval, err := strconv.ParseUint(crons[0], 10, 64)
-					if err != nil {
-						fmt.Errorf("cron format error.")
-						os.Exit(-1)
-						return
-					}
-					cleanPolicy := backupConfig.File.CleanPolicy
+				// waitGroup.Add(1)
+				// 同理,对象的内容有变化,但是指针是不变的,所以这里要传对象的复制
+				go func(consulURL string, backupStrategy model.BackupStrategy) {
+					job := consul.NewConsulBackup()
+					job.Exclude = backupStrategy.File.Exclude
+					job.Host = consulURL
+					job.PrefixPath = backupStrategy.File.Path
+					cleanPolicy := backupStrategy.File.CleanPolicy
 					if len(cleanPolicy) > 0 {
 						//清除旧的备份文件
+						// waitGroup.Add(1)
+						go func() {
+							s1 := gocron.NewScheduler()
+							s1.Every(1).Minutes().Do(func() {
+								job.CleanOld(cleanPolicy)
+							})
+							<-s1.Start()
+							// waitGroup.Done()
+						}()
 					}
-					job := consul.NewConsulBackup()
-					job.Exclude = backupConfig.File.Exclude
-					job.Host = consulConfig.InstanceURL
-					job.PrefixPath = backupConfig.File.Path
-					switch crons[1] {
-					case "d":
-						s1.Every(interval).Days().Do(func() {
-							job.Backup()
-						})
-						break
-					case "h":
-						s1.Every(interval).Hours().Do(func() {
-							job.Backup()
-						})
-						break
-					case "m":
-						s1.Every(interval).Minutes().Do(func() {
-							job.Backup()
-						})
-						break
-					case "s":
-						s1.Every(interval).Seconds().Do(func() {
-							job.Backup()
-						})
-						break
-					default:
-						fmt.Errorf("cron format error.")
-						os.Exit(-1)
-						return
-					}
-					<-s1.Start()
-					waitGroup.Done()
-				}()
+					//解析表达式
+					cron := backupStrategy.File.Cron
+					job.BackupByInterval(cron)
+					// waitGroup.Done()
+				}(consulInfo.InstanceURL, backupConfig)
 			}
-			waitGroup.Done()
-		}()
+			// waitGroup.Done()
+		}(consulConfig)
 	}
+	// wait till world end
 	waitGroup.Wait()
 	fmt.Println(" Exit. ")
-}
-
-func cleanJob(date string, wg *sync.WaitGroup) {
-	wg.Add(1)
-	go func() {
-
-		s1 := gocron.NewScheduler()
-		s1.Every(1).Minutes().Do(func() {
-			// job.Backup()
-		})
-		wg.Done()
-	}()
-
 }

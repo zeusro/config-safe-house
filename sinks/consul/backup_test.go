@@ -6,17 +6,18 @@ import (
 )
 
 var obj = ConsulBackup{
-	Host:      TEST_CONSUL_Host,
-	Exclude:   []string{"goms/leader/.+"},
-	StartDate: time.Now(),
+	Host:       TEST_CONSUL_Host,
+	Exclude:    []string{"goms/leader/.+"},
+	StartDate:  time.Now(),
+	PrefixPath: "../../backup/consul",
 }
 
 func TestBackup(t *testing.T) {
 	TestCleanOld(t)
-	obj.Backup("backup/consul")
+	obj.Backup()
 }
 
 func TestCleanOld(t *testing.T) {
-	today := time.Now()
-	obj.CleanOld(today)
+	cron := "5 m"
+	obj.CleanOld(cron)
 }
