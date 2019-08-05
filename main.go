@@ -35,7 +35,7 @@ func main() {
 		waitGroup.Add(1)
 		//对象的内容(consulConfig)有变化,但是指针是不变的,所以这里要传对象的复制
 		go func(consulInfo model.ConsulConfig) {
-			fmt.Printf("backup job : %s ; \n ", consulInfo.InstanceURL)
+			fmt.Printf("backup job : %s ;\n", consulInfo.InstanceURL)
 			backupConfigs := consulInfo.Backup
 			for _, backupConfig := range backupConfigs {
 				// waitGroup.Add(1)
