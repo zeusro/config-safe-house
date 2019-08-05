@@ -21,7 +21,7 @@ func main() {
 		config, _ = model.ParseFromPath(configPath)
 	}
 	if config == nil {
-		fmt.Printf("Load config fail, please check if config.yaml/config-default.yaml exist")
+		fmt.Printf("Load config fail, please check if config.yaml/config-default.yaml exist. \n path: %s", configPath)
 		os.Exit(-1)
 		return
 	}

@@ -3,10 +3,14 @@ consul:
   instanceURL: "https://prod.example.io"
   backup:
   - file:
+      # every 1 min run 
       cron: "1 m"
+      # backup path
       path: "backup/consul"
+      # exclude kv will not be backup,this is regex
       exclude:
       - "/leader/.+"
+      # clean the old backup 2 min ago
       cleanPolicy: "2 m"
 - instanceName: "test"
   instanceURL: "https://prod.example.io"

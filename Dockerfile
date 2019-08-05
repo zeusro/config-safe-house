@@ -13,5 +13,5 @@ RUN echo https://mirrors.ustc.edu.cn/alpine/v3.10/main > /etc/apk/repositories; 
     echo https://mirrors.ustc.edu.cn/alpine/v3.10/community >> /etc/apk/repositories;\
     echo "Asia/Shanghai" > /etc/timezone ;\
     apk add --no-cache bash 
-
+WORKDIR /
 ENTRYPOINT ["/config-safe-house"]
