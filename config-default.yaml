@@ -1,29 +1,19 @@
-
-kubernetes:
-  - instance:
-    backup:
-      - cron: ""        
-        strategy:
-          type: 'kubernetes'
-          format: "file"
-          path: 'kubernetes/'
 consul:
-  - instanceName: "prod"
-    instanceURL: ""
-    backup:
-      - name: "FileBackupPolicy"
-        cron: ""        
-        strategy:
-          name: "FileBackupStrategy"
-          type: 'consul'          
-          exclude:
-            - "/leader/.+"            
-          path: 'consul/'          
-    check:
-      - cron: ""        
-        strategy:
-          type: "http"
-          warn: 'dingtalk-1'
-alert:
-  - name: 'dingtalk-1'
-    type: 'dingtalk'
+- instanceName: "prod"
+  instanceURL: "https://prod.example.io"
+  backup:
+  - file:
+      cron: "1 m"
+      path: "backup/consul"
+      exclude:
+      - "/leader/.+"
+      cleanPolicy: "2 m"
+- instanceName: "test"
+  instanceURL: "https://prod.example.io"
+  backup:
+  - file:
+      cron: "1 m"
+      path: "backup/consul"
+      exclude:
+      - "/leader/.+"
+      cleanPolicy: "2 m"
