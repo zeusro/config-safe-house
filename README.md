@@ -26,5 +26,7 @@ docker is just one of the solution,you can also go build and run directly.
 - [ ] 配置替换
 - [ ] dingtalk alert
 
+```bash
     export GO111MODULE=on
     go mod vendor
+```
