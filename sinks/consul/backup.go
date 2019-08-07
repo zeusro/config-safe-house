@@ -13,6 +13,8 @@ import (
 	"strings"
 	"time"
 
+	"sync"
+
 	"github.com/jasonlvhit/gocron"
 )
 
@@ -136,6 +138,47 @@ func (obj *ConsulBackup) SaveToLocal(consulKey string) {
 		log.Fatal(err)
 		return
 	}
+}
+
+// ReplaceAllKeys 替换所有 key
+func (obj *ConsulBackup) ReplaceAllKeys() {
+	consulSDK := NewConsulAPI(obj.Host)
+	cofigArray := consulSDK.Keys()
+	var wg sync.WaitGroup
+	for _, key := range cofigArray {
+		wg.Add(1)
+		go func(key string) {
+			obj.ReplacelKey(key)
+			wg.Done()
+		}(key)
+	}
+	wg.Wait()
+}
+
+func (obj *ConsulBackup) ReplacelKey(key string) {
+	consulSDK := NewConsulAPI(obj.Host)
+	value := consulSDK.Key(key)
+	newValue := replaceText(value)
+	if strings.EqualFold(value, newValue) {
+		// fmt.Println("NO NEED")
+		return
+	}
+	fmt.Printf("deal wit key: %v \n", key)
+	consulSDK.UpdateKey(key, newValue)
+}
+
+// replaceText 配置替换字典
+func replaceText(text string) string {
+	m := make(map[string]string)
+	// m[""] = ""
+	// m[""] = ""
+	for k, v := range m {
+		if strings.Contains(text, k) {
+			fmt.Println("包含 ", k)
+			text = strings.ReplaceAll(text, k, v)
+		}
+	}
+	return text
 }
 
 // CleanOld 危险接口,慎重使用

@@ -57,3 +57,14 @@ func (obj *ConsulAPI) Key(key string) string {
 	// fmt.Println(response)
 	return response
 }
+
+func (obj *ConsulAPI) UpdateKey(key, value string) {
+	url := fmt.Sprintf(URL_KEY, obj.Host, key)
+	_, err := util.HttpPut(url, value)
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	// fmt.Println(response)
+
+}

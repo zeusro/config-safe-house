@@ -23,7 +23,7 @@ docker is just one of the solution,you can also go build and run directly.
 ## TODO
 
 - [x] 配置解析(2019-08-03)
-- [ ] 配置替换
+- [x] 配置替换(2019-08-07 以测试用例形式进行)
 - [ ] dingtalk alert
 
 ```bash
