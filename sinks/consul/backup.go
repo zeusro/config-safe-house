@@ -213,7 +213,7 @@ func (obj *ConsulBackup) CleanOld(cron string) {
 		return
 	}
 	// 遍历清除文件
-	backupDir := path.Join(obj.PrefixPath, consulURL.Host)
+	backupDir := path.Join(obj.PrefixPath, obj.Name + "_" + consulURL.Host)
 	location, _ := time.LoadLocation("Local")
 	deadlineDate := time.Date(deadline.Year(), deadline.Month(), deadline.Day(), 0, 0, 0, 0, location)
 	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, location)
