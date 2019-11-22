@@ -42,6 +42,7 @@ func main() {
 				// 同理,对象的内容有变化,但是指针是不变的,所以这里要传对象的复制
 				go func(consulURL string, backupStrategy model.BackupStrategy) {
 					job := consul.NewConsulBackup()
+					job.Name = consulInfo.InstanceName
 					job.Exclude = backupStrategy.File.Exclude
 					job.Host = consulURL
 					job.PrefixPath = backupStrategy.File.Path

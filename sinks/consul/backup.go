@@ -26,6 +26,7 @@ const (
 type ConsulBackup struct {
 	// Type      string
 	// Format    string
+	Name  	   string
 	Exclude    []string
 	Host       string
 	StartDate  time.Time
@@ -124,7 +125,7 @@ func (obj *ConsulBackup) SaveToLocal(consulKey string) {
 		log.Fatal(err)
 		return
 	}
-	filePath := path.Join(obj.PrefixPath, consulURL.Host, today, now, consulKey)
+	filePath := path.Join(obj.PrefixPath, obj.Name + "_" + consulURL.Host, today, now, consulKey)
 	parentDir := filepath.Dir(filePath)
 	// fmt.Printf("filePath: %s \n", filePath)
 	// fmt.Printf("parentDir: %s \n", parentDir)
