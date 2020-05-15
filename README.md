@@ -4,6 +4,14 @@ Backup `consul` kv,`kubernetes` yaml and so no.
 
 ## usage
 
+### backup once
+
+- set `TEST_CONSUL_Host`
+
+- run test in `sinks/consul/consul_backup_test.go`
+
+- then you can see backup folder in this project
+
 ### config
 
 example: [config-default.yaml](/config-default.yaml)
@@ -14,7 +22,6 @@ example: [config-default.yaml](/config-default.yaml)
 ```
 
 docker is just one of the solution,you can also go build and run directly.
-
 
 ## Feature
 

@@ -13,6 +13,6 @@ var obj = ConsulBackup{
 }
 
 func TestBackup(t *testing.T) {
-	TestCleanOld(t)
+	// TestCleanOld(t)
 	obj.Backup()
 }
