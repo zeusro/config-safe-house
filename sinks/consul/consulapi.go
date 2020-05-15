@@ -13,9 +13,9 @@ type ConsulAPI struct {
 }
 
 const (
-	// 遍历 key 接口
+	// list key API
 	URL_KEYS = "%s/v1/kv/?keys"
-	// key 接口
+	// key API
 	URL_KEY = "%s/v1/kv/%s?raw"
 )
 
@@ -25,6 +25,7 @@ func NewConsulAPI(host string) *ConsulAPI {
 	}
 }
 
+// Keys https://www.consul.io/api/kv.html#keys
 func (obj *ConsulAPI) Keys() (cofigArray []string) {
 	host := obj.Host
 	configs, err := util.HttpGet(fmt.Sprintf(URL_KEYS, host))
@@ -58,6 +59,7 @@ func (obj *ConsulAPI) Key(key string) string {
 	return response
 }
 
+// UpdateKey https://www.consul.io/api/kv.html
 func (obj *ConsulAPI) UpdateKey(key, value string) {
 	url := fmt.Sprintf(URL_KEY, obj.Host, key)
 	_, err := util.HttpPut(url, value)

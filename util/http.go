@@ -13,7 +13,6 @@ func HttpGet(url string) (string, error) {
 	if err != nil {
 		return response, err
 	}
-
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -41,24 +40,19 @@ func HttpPut(url string, requestString string) (string, error) {
 	return string(responseText), nil
 }
 
+// HttpPostForm TODO
 func HttpPostForm(url string, m map[string]string) (string, error) {
-	//TODO:
 	response := ""
-
 	var r http.Request
-
 	r.ParseForm()
 	for k, v := range m {
 		r.Form.Add(k, v)
 	}
 	body := strings.NewReader(r.Form.Encode())
-
 	resp, err := http.Post(url, "application/x-www-form-urlencoded", body)
-
 	if err != nil {
 		return response, err
 	}
-
 	defer resp.Body.Close()
 	responseByte, err2 := ioutil.ReadAll(resp.Body)
 	if err2 != nil {

@@ -41,11 +41,11 @@ func main() {
 				// waitGroup.Add(1)
 				// 同理,对象的内容有变化,但是指针是不变的,所以这里要传对象的复制
 				go func(consulURL string, backupStrategy model.BackupStrategy) {
-					job := consul.NewConsulBackup()
-					job.Name = consulInfo.InstanceName
-					job.Exclude = backupStrategy.File.Exclude
-					job.Host = consulURL
-					job.PrefixPath = backupStrategy.File.Path
+					backupJob := consul.NewConsulBackup()
+					backupJob.Name = consulInfo.InstanceName
+					backupJob.Exclude = backupStrategy.File.Exclude
+					backupJob.Host = consulURL
+					backupJob.PrefixPath = backupStrategy.File.Path
 					cleanPolicy := backupStrategy.File.CleanPolicy
 					if len(cleanPolicy) > 0 {
 						//清除旧的备份文件
@@ -53,7 +53,12 @@ func main() {
 						go func() {
 							s1 := gocron.NewScheduler()
 							s1.Every(1).Minutes().Do(func() {
-								job.CleanOld(cleanPolicy)
+								killer := consul.ConsulKiller{
+									Name:       consulInfo.InstanceName,
+									Host:       consulURL,
+									PrefixPath: backupStrategy.File.Path,
+								}
+								killer.CleanOld(cleanPolicy)
 							})
 							<-s1.Start()
 							// waitGroup.Done()
@@ -61,7 +66,7 @@ func main() {
 					}
 					//解析表达式
 					cron := backupStrategy.File.Cron
-					job.BackupByInterval(cron)
+					backupJob.BackupByInterval(cron)
 					// waitGroup.Done()
 				}(consulInfo.InstanceURL, backupConfig)
 			}

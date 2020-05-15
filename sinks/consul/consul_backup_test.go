@@ -16,12 +16,3 @@ func TestBackup(t *testing.T) {
 	TestCleanOld(t)
 	obj.Backup()
 }
-
-func TestReplaceAllKeys(t *testing.T) {
-	obj.ReplaceAllKeys()
-}
-
-func TestCleanOld(t *testing.T) {
-	cron := "5 m"
-	obj.CleanOld(cron)
-}
