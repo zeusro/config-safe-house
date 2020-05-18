@@ -133,17 +133,3 @@ func (obj *ConsulBackup) SaveToLocal(consulKey string) {
 		return
 	}
 }
-
-// replaceText 配置替换字典
-func replaceText(text string) string {
-	m := make(map[string]string)
-	// m[""] = ""
-	// m[""] = ""
-	for k, v := range m {
-		if strings.Contains(text, k) {
-			fmt.Println("包含 ", k)
-			text = strings.ReplaceAll(text, k, v)
-		}
-	}
-	return text
-}
